@@ -56,6 +56,7 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
     mkdir -p $CONDA_DIR && \
     chown $NB_USER:$NB_GID $CONDA_DIR && \
     chmod g+w /etc/passwd && \
+    fix-permissions $CONDA_DIR && \
     fix-permissions $HOME && \
     fix-permissions "$(dirname $CONDA_DIR)"
 
@@ -87,7 +88,6 @@ RUN cd /tmp && \
     $CONDA_DIR/bin/conda update --all --quiet --yes && \
     conda clean --all -f -y && \
     rm -rf /home/$NB_USER/.cache/yarn && \
-    fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
 # Install Tini
