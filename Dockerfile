@@ -14,6 +14,7 @@ RUN apt-get update \
  && apt-get dist-upgrade -y\
  && apt-get install -yq --no-install-recommends \
     wget \
+    curl \
     bzip2 \
     ca-certificates \
     sudo \
