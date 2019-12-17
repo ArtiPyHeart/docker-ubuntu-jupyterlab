@@ -23,10 +23,14 @@ RUN apt-get update \
     run-one \
     tmux \
     git \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen
+    zip \
+    unzip \
+    vim \
+    nano \
+ && apt-get clean && rm -rf /var/lib/apt/lists/* \
+ && curl -s "https://get.sdkman.io" | bash \ 
+ && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \ 
+ && locale-gen
 
 # Configure environment
 ENV CONDA_DIR=/opt/conda \
