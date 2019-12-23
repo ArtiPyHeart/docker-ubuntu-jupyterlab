@@ -108,6 +108,7 @@ RUN conda install --quiet --yes 'tini=0.18.0' && \
 # Do all this in a single RUN command to avoid duplicating all of the
 # files across image layers when the permissions change
 RUN conda install --quiet --yes \
+    'pip' \
     'nb_conda_kernels' \
     'notebook=6.0.0' \
     'jupyterhub=1.0.0' \
@@ -119,7 +120,11 @@ RUN conda install --quiet --yes \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    pip install https://github.com/wenmin-wu/jupyter-tabnine/archive/master.zip && \
+    jupyter nbextension install --py jupyter_tabnine --system && \
+    jupyter nbextension enable --py jupyter_tabnine --system && \
+    jupyter serverextension enable --py jupyter_tabnine --system
 
 EXPOSE 8888
 
