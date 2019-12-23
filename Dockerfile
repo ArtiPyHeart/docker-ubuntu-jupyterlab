@@ -122,9 +122,9 @@ RUN conda install --quiet --yes \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     pip install https://github.com/wenmin-wu/jupyter-tabnine/archive/master.zip && \
-    jupyter nbextension install --py jupyter_tabnine --system && \
-    jupyter nbextension enable --py jupyter_tabnine --system && \
-    jupyter serverextension enable --py jupyter_tabnine --system
+    jupyter nbextension install --py jupyter_tabnine --user && \
+    jupyter nbextension enable --py jupyter_tabnine --user && \
+    jupyter serverextension enable --py jupyter_tabnine --user
 
 EXPOSE 8888
 
