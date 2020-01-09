@@ -25,10 +25,11 @@ RUN apt-get update \
     git \
     zip \
     unzip \
-    vim \
     nano \
+    cron \
+    sasl2-bin libsasl2-2 libsasl2-dev libsasl2-modules \
+ && touch /var/log/cron.log \
  && apt-get clean && rm -rf /var/lib/apt/lists/* \
- && curl -s "https://get.sdkman.io" | bash \ 
  && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \ 
  && locale-gen
 
@@ -120,17 +121,13 @@ RUN conda install --quiet --yes \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    pip install https://github.com/wenmin-wu/jupyter-tabnine/archive/master.zip && \
-    jupyter nbextension install --py jupyter_tabnine --user && \
-    jupyter nbextension enable --py jupyter_tabnine --user && \
-    jupyter serverextension enable --py jupyter_tabnine --user
+    fix-permissions /home/$NB_USER
 
 EXPOSE 8888
 
 # Configure container startup
 ENTRYPOINT ["tini", "-g", "--"]
-CMD ["start-notebook.sh"]
+CMD ["start-cron-and-notebook.sh"]
 
 # Add local files as late as possible to avoid cache busting
 COPY start.sh /usr/local/bin/
