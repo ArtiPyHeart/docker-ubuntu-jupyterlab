@@ -2,7 +2,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-cron && tail -f /var/log/cron.log
+supercronic /etc/cron.d/crontab
 
 set -e
 

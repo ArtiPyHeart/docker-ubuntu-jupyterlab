@@ -26,8 +26,8 @@ RUN apt-get update \
     zip \
     unzip \
     nano \
-    cron \
     sasl2-bin libsasl2-2 libsasl2-dev libsasl2-modules \
+    cron \
  && touch /var/log/cron.log \
  && apt-get clean && rm -rf /var/lib/apt/lists/* \
  && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \ 
@@ -45,9 +45,19 @@ ENV CONDA_DIR=/opt/conda \
 ENV PATH=$CONDA_DIR/bin:$PATH \
     HOME=/home/$NB_USER
 
+ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.9/supercronic-linux-amd64 \
+    SUPERCRONIC=supercronic-linux-amd64 \
+    SUPERCRONIC_SHA1SUM=5ddf8ea26b56d4a7ff6faecdd8966610d5cb9d85
+
 # Add a script that we will use to correct permissions after running certain commands
 ADD fix-permissions /usr/local/bin/fix-permissions
-RUN chmod a+rx /usr/local/bin/fix-permissions
+ADD crontab /etc/cron.d/crontab
+RUN chmod 0777 /etc/cron.d/crontab && chmod a+rx /usr/local/bin/fix-permissions
+RUN curl -fsSLO "$SUPERCRONIC_URL" \
+ && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
+ && chmod +x "$SUPERCRONIC" \
+ && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
+ && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic
 
 # Enable prompt color in the skeleton .bashrc before creating the default NB_USER
 RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc
