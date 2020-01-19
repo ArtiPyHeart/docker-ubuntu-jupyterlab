@@ -4,6 +4,8 @@
 
 set -e
 
+/usr/local/bin/supercronic /etc/crontab
+
 wrapper=""
 if [[ "${RESTARTABLE}" == "yes" ]]; then
   wrapper="run-one-constantly"

@@ -28,6 +28,7 @@ RUN apt-get update \
     nano \
     sasl2-bin libsasl2-2 libsasl2-dev libsasl2-modules \
     cron \
+    gcc \
  && touch /var/log/cron.log \
  && apt-get clean && rm -rf /var/lib/apt/lists/* \
  && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \ 
@@ -50,9 +51,9 @@ ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.
     SUPERCRONIC_SHA1SUM=5ddf8ea26b56d4a7ff6faecdd8966610d5cb9d85
 
 # Add a script that we will use to correct permissions after running certain commands
+ADD crontab /etc/crontab
 ADD fix-permissions /usr/local/bin/fix-permissions
-ADD crontab /etc/cron.d/crontab
-RUN chmod 0777 /etc/cron.d/crontab && chmod a+rx /usr/local/bin/fix-permissions
+RUN chmod a+rx /usr/local/bin/fix-permissions && chmod 0777 /etc/crontab
 RUN curl -fsSLO "$SUPERCRONIC_URL" \
  && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
  && chmod +x "$SUPERCRONIC" \
@@ -112,6 +113,8 @@ RUN conda install --quiet --yes 'tini=0.18.0' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
+
+
 # Install Jupyter Notebook, Lab, and Hub
 # Generate a notebook server config
 # Cleanup temporary files
@@ -137,7 +140,7 @@ EXPOSE 8888
 
 # Configure container startup
 ENTRYPOINT ["tini", "-g", "--"]
-CMD ["start-cron-and-notebook.sh"]
+CMD ["start-notebook.sh"]
 
 # Add local files as late as possible to avoid cache busting
 COPY start.sh /usr/local/bin/
